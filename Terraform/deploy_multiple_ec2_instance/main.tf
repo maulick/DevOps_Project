@@ -1,6 +1,6 @@
 resource "aws_instance" "devops_ec2_instance" {
 
-  # Creates four identical aws ec2 instances with different names
+  # Creates multiple identical aws ec2 instances with different names
   count = length(var.instance_names)
 
   # All four instances will have the same ami and instance_type
