@@ -22,3 +22,8 @@ variable "instance_names" {
   type        = list(string)
   default     = ["Jenkins", "Nexux", "SonarQube", "K8s_Master", "K8s_Node"]
 }
+
+# Assigning a key name 
+variable "key_name" {
+  default = "devops"
+}
