@@ -1,0 +1,49 @@
+---
+- name: Install node and npm
+  become: true
+  hosts: ubuntu_server
+  tasks:
+    - name: Update apt repo and cache
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+        cache_valid_time: 3600
+    - name: Install nodejs and npm
+      apt:
+        pkg:
+          - nodejs
+          - npm
+
+- name: Create new linux user for node app
+  hosts: ubuntu_server
+  become: true
+  tasks:
+    - name: Create linux user
+      user:
+        name: node_user
+        comment: node admin user
+        group: osboxes
+
+- name: Deploy nodejs app
+  hosts: ubuntu_server
+  become: true
+  become_user: node_user
+  tasks:
+    - name: Unpack the nodejs tar file
+      unarchive:
+        src: /home/osboxes/DevOps_Project/Ansible/Automate_Node_App_Deployment/simple-nodejs/nodejs-app-1.0.0.tgz
+        dest: /home/node_user/
+    - name: Install dependencies
+      npm:
+        path: /home/node_user/package/
+    - name: Start the application
+      command:
+        chdir: /home/node_user/package/app/
+        cmd: node server
+      async: 1000
+      poll: 0
+    - name: Ensure app is running
+      shell: ps aux | grep node
+      register: app_status
+    - debug: msg={{app_status.stdout_lines}}
+
