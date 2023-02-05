@@ -1,0 +1,8 @@
+[ubuntu_server]
+192.168.230.133
+192.168.230.135
+192.168.230.137
+
+[ubuntu_server:vars]
+ansible_ssh_private_key_file=~/.ssh/id_rsa
+ansible_user=osboxes
