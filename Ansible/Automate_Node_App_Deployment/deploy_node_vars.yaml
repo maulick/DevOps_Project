@@ -1,0 +1,4 @@
+version: 1.0.0
+location: /home/osboxes/DevOps_Project/Ansible/Automate_Node_App_Deployment/simple-nodejs
+linux_name: node
+user_home_dir: /home/{{linux_name}}

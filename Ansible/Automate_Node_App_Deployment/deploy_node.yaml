@@ -17,33 +17,37 @@
 - name: Create new linux user for node app
   hosts: ubuntu_server
   become: true
+  vars_files:
+    - deploy_node_vars.yaml
   tasks:
     - name: Create linux user
       user:
-        name: node_user
+        name: "{{linux_name}}"
         comment: node admin user
         group: osboxes
 
 - name: Deploy nodejs app
   hosts: ubuntu_server
   become: true
-  become_user: node_user
+  become_user: "{{linux_name}}"
+  vars_files:
+    - deploy_node_vars.yaml
   tasks:
     - name: Unpack the nodejs tar file
       unarchive:
-        src: /home/osboxes/DevOps_Project/Ansible/Automate_Node_App_Deployment/simple-nodejs/nodejs-app-1.0.0.tgz
-        dest: /home/node_user/
+        src: "{{location}}/nodejs-app-{{version}}.tgz"
+        dest: "{{user_home_dir}}"
     - name: Install dependencies
       npm:
-        path: /home/node_user/package/
+        path: "{{user_home_dir}}/package/"
     - name: Start the application
       command:
-        chdir: /home/node_user/package/app/
+        chdir: "{{user_home_dir}}/package/app/"
         cmd: node server
       async: 1000
       poll: 0
     - name: Ensure app is running
-      shell: ps aux | grep node
+      shell: ps aux | grep "node server"
       register: app_status
     - debug: msg={{app_status.stdout_lines}}
 
